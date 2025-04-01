@@ -1,29 +1,3 @@
-(*
-*)
-
-
-
-(* class tuple (x, y ,z ,w) = 
-object
-  val x : float = x
-  val y : float = y
-  val z : float = z
-  val w : float = w
-
-  method gx = x
-  method gy = y
-  method gz = z
-  method gw = w
-  
-  method is_point = 
-    if w=1. then true else false
-  method is_vector = 
-    if w=0. then true else false
-
-end
-
-let point (x, y, z) = new tuple (x, y, z, 1.)
-let vector (x, y, z) = new tuple (x, y, z, 0.) *)
 
 type tuple = {x:float ; y:float ; z:float ; w:float}
 let point (x,y,z) = {x=x ; y=y ; z=z ; w=1.0} 
