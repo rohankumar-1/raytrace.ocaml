@@ -2,108 +2,108 @@ open Raytrace.Tuple
 open OUnit2
 
 let test_tuple_pnt _ = 
-  let t = new tuple (4.3, -4.2, 3.1, 1.0) in
-  assert_equal 4.3 t#gx;
-  assert_equal (-4.2) t#gy;
-  assert_equal 3.1 t#gz;
-  assert_equal 1.0 t#gw;
-  assert_equal true t#is_point;
-  assert_equal false t#is_vector
+  let t = point (4.3, -4.2, 3.1) in
+  assert_equal 4.3 t.x;
+  assert_equal (-4.2) t.y;
+  assert_equal 3.1 t.z;
+  assert_equal 1.0 t.w;
+  assert_equal true (is_point t);
+  assert_equal false (is_vector t);
 ;;
 
 let test_tuple_vec _ = 
-  let t = new tuple (4.3, -4.2, 3.1, 0.0) in
-  assert_equal 4.3 t#gx;
-  assert_equal (-4.2) t#gy;
-  assert_equal 3.1 t#gz;
-  assert_equal 0.0 t#gw;
-  assert_equal false t#is_point;
-  assert_equal true t#is_vector
+  let t = vector (4.3, -4.2, 3.1) in
+  assert_equal 4.3 t.x;
+  assert_equal (-4.2) t.y;
+  assert_equal 3.1 t.z;
+  assert_equal 0.0 t.w;
+  assert_equal false (is_point t);
+  assert_equal true (is_vector t);
 ;;
 
 let test_pnt _ = 
     let p = point (4., -4., 3.) in
-    let t = new tuple (4., -4., 3., 1.) in
-    assert_equal p#gw t#gw;
-    assert_equal p#gx t#gx;
-    assert_equal p#gy t#gy;
-    assert_equal p#gz t#gz
+    let t = {x=4.; y=(-4.); z=3.; w=1.} in
+    assert_equal p.w t.w;
+    assert_equal p.x t.x;
+    assert_equal p.y t.y;
+    assert_equal p.z t.z
 ;;
 
 let test_vec _ = 
   let p = vector (4., -4., 3.) in
-  let t = new tuple (4., -4., 3., 0.) in
-  assert_equal p#gw t#gw;
-  assert_equal p#gx t#gx;
-  assert_equal p#gy t#gy;
-  assert_equal p#gz t#gz
+  let t = {x=4.; y=(-4.); z=3.; w=0.} in
+  assert_equal p.w t.w;
+  assert_equal p.x t.x;
+  assert_equal p.y t.y;
+  assert_equal p.z t.z
 ;;
 
 let test_add _ = 
-  let t1 = new tuple (3., -2., 5., 1.) in
-  let t2 = new tuple (-2., 3., 1., 0.) in
+  let t1 = {x=3.; y=(-2.); z=5.; w=1.} in
+  let t2 = {x=(-2.); y=3.; z=1.; w=0.} in
   let s = add_tup t1 t2 in
-  assert_equal s#gw 1.0;
-  assert_equal s#gx 1.0;
-  assert_equal s#gy 1.0;
-  assert_equal s#gz 6.0
+  assert_equal s.w 1.0;
+  assert_equal s.x 1.0;
+  assert_equal s.y 1.0;
+  assert_equal s.z 6.0
 ;;
 
 let test_sub_1 _ = 
   let t1 = point (3., 2., 1.) in
   let t2 = point (5., 6., 7.) in
   let s = sub_tup t1 t2 in
-  assert_equal s#gw 0.0;
-  assert_equal s#gx (-2.0);
-  assert_equal s#gy (-4.0);
-  assert_equal s#gz (-6.0)
+  assert_equal s.w 0.0;
+  assert_equal s.x (-2.0);
+  assert_equal s.y (-4.0);
+  assert_equal s.z (-6.0)
 ;;
 
 let test_sub_2 _ = 
   let t1 = point (3., 2., 1.) in
   let t2 = vector (5., 6., 7.) in
   let s = sub_tup t1 t2 in
-  assert_equal s#gw 1.0;
-  assert_equal s#gx (-2.0);
-  assert_equal s#gy (-4.0);
-  assert_equal s#gz (-6.0)
+  assert_equal s.w 1.0;
+  assert_equal s.x (-2.0);
+  assert_equal s.y (-4.0);
+  assert_equal s.z (-6.0)
 ;;
 
 let test_sub_3 _ = 
   let t1 = vector (3., 2., 1.) in
   let t2 = vector (5., 6., 7.) in
   let s = sub_tup t1 t2 in
-  assert_equal s#gw 0.0;
-  assert_equal s#gx (-2.0);
-  assert_equal s#gy (-4.0);
-  assert_equal s#gz (-6.0)
+  assert_equal s.w 0.0;
+  assert_equal s.x (-2.0);
+  assert_equal s.y (-4.0);
+  assert_equal s.z (-6.0)
 ;;
 
 let test_negate _ = 
-  let t1 = new tuple (1., -2., 3., -4.) in
+  let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
   let s = ~~ t1 in
-  assert_equal s#gw (4.0);
-  assert_equal s#gx (-1.0);
-  assert_equal s#gy (2.0);
-  assert_equal s#gz (-3.0)
+  assert_equal s.w (4.0);
+  assert_equal s.x (-1.0);
+  assert_equal s.y (2.0);
+  assert_equal s.z (-3.0)
 ;;
 
 let test_scalar_mult _ = 
-  let t1 = new tuple (1., -2., 3., -4.) in
+  let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
   let s = t1 *** 3.5 in
-  assert_equal s#gw (-14.0);
-  assert_equal s#gx (3.5);
-  assert_equal s#gy (-7.0);
-  assert_equal s#gz (10.5)
+  assert_equal s.w (-14.0);
+  assert_equal s.x (3.5);
+  assert_equal s.y (-7.0);
+  assert_equal s.z (10.5)
 ;;
 
 let test_scalar_div _ =
-  let t1 = new tuple (1., -2., 3., -4.) in
+  let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
   let s = t1 // 2. in
-  assert_equal s#gw (-2.0);
-  assert_equal s#gx (0.5);
-  assert_equal s#gy (-1.0);
-  assert_equal s#gz (1.5)
+  assert_equal s.w (-2.0);
+  assert_equal s.x (0.5);
+  assert_equal s.y (-1.0);
+  assert_equal s.z (1.5)
 ;;
 
 let test_magnitude_1 _ =
@@ -124,10 +124,10 @@ let test_magnitude_3 _ =
 let test_norm _ =
   let t1 = vector (-4., 0., 0.) in
   let s = norm t1 in
-  assert_equal s#gx (-1.0);
-  assert_equal s#gy (0.0);
-  assert_equal s#gz (0.0);
-  assert_equal s#gw (0.0);
+  assert_equal s.x (-1.0);
+  assert_equal s.y (0.0);
+  assert_equal s.z (0.0);
+  assert_equal s.w (0.0);
 ;;
 
 let test_dot _ = 
@@ -141,12 +141,12 @@ let test_cross _ =
   let t2 = vector (2., 3., 4.) in
   let s1 = t1 *@ t2 in
   let s2 = t2 *@ t1 in
-  assert_equal s1#gx (-1.0);
-  assert_equal s1#gy (2.0);
-  assert_equal s1#gz (-1.0);
-  assert_equal s2#gx (1.0);
-  assert_equal s2#gy (-2.0);
-  assert_equal s2#gz (1.0);
+  assert_equal s1.x (-1.0);
+  assert_equal s1.y (2.0);
+  assert_equal s1.z (-1.0);
+  assert_equal s2.x (1.0);
+  assert_equal s2.y (-2.0);
+  assert_equal s2.z (1.0);
 ;;
 
 let suite = 

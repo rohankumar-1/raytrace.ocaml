@@ -3,7 +3,7 @@
 
 
 
-class tuple (x, y ,z ,w) = 
+(* class tuple (x, y ,z ,w) = 
 object
   val x : float = x
   val y : float = y
@@ -23,25 +23,37 @@ object
 end
 
 let point (x, y, z) = new tuple (x, y, z, 1.)
-let vector (x, y, z) = new tuple (x, y, z, 0.)
+let vector (x, y, z) = new tuple (x, y, z, 0.) *)
+
+type tuple = {x:float ; y:float ; z:float ; w:float}
+let point (x,y,z) = {x=x ; y=y ; z=z ; w=1.0} 
+let vector (x,y,z) = {x=x; y=y ; z=z ; w=0.0} 
+
+let is_point t = t.w=1.0
+let is_vector t = t.w=0.0
+
 
 (* UNARY OPS *)
-let negate t = new tuple (t#gx *. (-1.), t#gy *. (-1.), t#gz *. (-1.), t#gw *. (-1.)) (* ??? should the indicator (w) be negated *)
-let magnitude t = sqrt (t#gx *. t#gx +. t#gy *. t#gy +. t#gz *. t#gz +. t#gw *. t#gw)
+let negate t = {x = t.x*.(-1.) ;  y = t.y *. (-1.) ; z = t.z *. (-1.) ; w = t.w *. (-1.)} (* ??? should the indicator (w) be negated *)
+let magnitude t = sqrt (t.x *. t.x +. t.y *. t.y +. t.z *. t.z +. t.w *. t.w)
 let norm t = 
-  let m = magnitude t in 
-  new tuple (t#gx /. m, t#gy /. m, t#gz /. m, t#gw /. m)
+  let m = magnitude t in {
+    x = t.x /. m ;
+    y = t.y /. m ; 
+    z = t.z /. m ; 
+    w = t.w /. m 
+  }
 
 (* BINARY OPS *)
-let add_tup t1 t2 = new tuple (t1#gx +. t2#gx, t1#gy +. t2#gy, t1#gz +. t2#gz, t1#gw +. t2#gw)
-let sub_tup t1 t2 = new tuple (t1#gx -. t2#gx, t1#gy -. t2#gy, t1#gz -. t2#gz, t1#gw -. t2#gw)
-let mult_tup tup c = new tuple (tup#gx *. c, tup#gy *. c, tup#gz *. c, tup#gw *. c)
-let div_tup tup c = new tuple (tup#gx /. c, tup#gy /. c, tup#gz /. c, tup#gw /. c)
-let dot t1 t2 = (t1#gx *. t2#gx) +. (t1#gy *. t2#gy) +. (t1#gz *. t2#gz) +. (t1#gw *. t2#gw)
+let add_tup t1 t2 = {x = t1.x +. t2.x; y = t1.y +. t2.y; z = t1.z +. t2.z; w = t1.w +. t2.w}
+let sub_tup t1 t2 = {x = t1.x -. t2.x; y =  t1.y -. t2.y; z = t1.z -. t2.z; w = t1.w -. t2.w}
+let mult_tup tup c = {x = tup.x *. c; y = tup.y *. c; z = tup.z *. c; w = tup.w *. c}
+let div_tup tup c = {x = tup.x /. c; y =  tup.y /. c; z =  tup.z /. c; w =  tup.w /. c}
+let dot t1 t2 = (t1.x *. t2.x) +. (t1.y *. t2.y) +. (t1.z *. t2.z) +. (t1.w *. t2.w)
 let cross a b = vector (
-  (a#gy *. b#gz) -. (a#gz *. b#gy),
-  (a#gz *. b#gx) -. (a#gx *. b#gz),
-  (a#gx *. b#gy) -. (a#gy *. b#gx)
+  (a.y *. b.z) -. (a.z *. b.y),
+  (a.z *. b.x) -. (a.x *. b.z),
+  (a.x *. b.y) -. (a.y *. b.x)
 )
 
 (* OPERATOR BINDINGS *)
