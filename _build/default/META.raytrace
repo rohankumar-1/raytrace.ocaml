@@ -1,0 +1,6 @@
+description = ""
+requires = ""
+archive(byte) = "raytrace.cma"
+archive(native) = "raytrace.cmxa"
+plugin(byte) = "raytrace.cma"
+plugin(native) = "raytrace.cmxs"

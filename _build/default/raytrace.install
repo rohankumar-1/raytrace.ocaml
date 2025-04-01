@@ -1,0 +1,22 @@
+lib: [
+  "_build/install/default/lib/raytrace/META"
+  "_build/install/default/lib/raytrace/dune-package"
+  "_build/install/default/lib/raytrace/opam"
+  "_build/install/default/lib/raytrace/raytrace.a"
+  "_build/install/default/lib/raytrace/raytrace.cma"
+  "_build/install/default/lib/raytrace/raytrace.cmi"
+  "_build/install/default/lib/raytrace/raytrace.cmt"
+  "_build/install/default/lib/raytrace/raytrace.cmx"
+  "_build/install/default/lib/raytrace/raytrace.cmxa"
+  "_build/install/default/lib/raytrace/raytrace.ml"
+  "_build/install/default/lib/raytrace/raytrace__Tuple.cmi"
+  "_build/install/default/lib/raytrace/raytrace__Tuple.cmt"
+  "_build/install/default/lib/raytrace/raytrace__Tuple.cmx"
+  "_build/install/default/lib/raytrace/tuple.ml"
+]
+libexec: [
+  "_build/install/default/lib/raytrace/raytrace.cmxs"
+]
+bin: [
+  "_build/install/default/bin/main"
+]
