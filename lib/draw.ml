@@ -21,20 +21,14 @@ type canvas = {
 }
 
 let scale_format_pixel pixel = 
-  let scale x = 
-    let scaled = 255. *. x in
-    if scaled > 255. then 255
-    else if scaled < 0. then 0
-    else int_of_float scaled in
   match pixel with
   | Blank -> "0 0 0"
-  | Color c -> Printf.sprintf "%d %d %d" (scale c.red) (scale c.blue) (scale c.green)
+  | Color c -> Printf.sprintf "%d %d %d" (scale c.red) (scale c.green) (scale c.blue)
 
 let make_canvas ~h ~w = {height=h; width=w; grid= Array.make_matrix h w Blank}
-
 
 let write_canvas ~oc ~can =
   (* following line writes initial text (format, dims, color scale) to file*)
   Printf.fprintf oc "P3\n%d %d\n255\n" can.height can.width;
-  Array.iter (fun x -> Array.iter (fun y -> Printf.fprintf oc "%s " (scale_format_pixel y);) x ; print_newline ()) can.grid
+  Array.iter (fun x -> Array.iter (fun y -> Printf.fprintf oc "%s " (scale_format_pixel y);) x ; Printf.fprintf oc "%s\n" "") can.grid
 ;; 

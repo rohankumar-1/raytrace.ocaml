@@ -1,7 +1,7 @@
 
 type tuple = {x:float ; y:float ; z:float ; w:float}
-let point (x,y,z) = {x=x ; y=y ; z=z ; w=1.0} 
-let vector (x,y,z) = {x=x; y=y ; z=z ; w=0.0} 
+let point x y z = {x=x ; y=y ; z=z ; w=1.0} 
+let vector x y z = {x=x; y=y ; z=z ; w=0.0} 
 
 let is_point t = t.w=1.0
 let is_vector t = t.w=0.0
@@ -24,11 +24,12 @@ let sub_tup t1 t2 = {x = t1.x -. t2.x; y =  t1.y -. t2.y; z = t1.z -. t2.z; w = 
 let mult_tup tup c = {x = tup.x *. c; y = tup.y *. c; z = tup.z *. c; w = tup.w *. c}
 let div_tup tup c = {x = tup.x /. c; y =  tup.y /. c; z =  tup.z /. c; w =  tup.w /. c}
 let dot t1 t2 = (t1.x *. t2.x) +. (t1.y *. t2.y) +. (t1.z *. t2.z) +. (t1.w *. t2.w)
-let cross a b = vector (
-  (a.y *. b.z) -. (a.z *. b.y),
-  (a.z *. b.x) -. (a.x *. b.z),
-  (a.x *. b.y) -. (a.y *. b.x)
-)
+let cross a b = 
+  vector 
+  ((a.y *. b.z) -. (a.z *. b.y))
+  ((a.z *. b.x) -. (a.x *. b.z))
+  ((a.x *. b.y) -. (a.y *. b.x))
+
 
 (* OPERATOR BINDINGS *)
 let ( ~~ ) = negate

@@ -26,7 +26,7 @@
    tuple.ml
    util.ml))
  (libexec (raytrace.cmxs))
- (bin (main)))
+ (bin (draw_arc main)))
 (library
  (name raytrace)
  (kind normal)

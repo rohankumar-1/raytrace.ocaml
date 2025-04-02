@@ -26,5 +26,6 @@ libexec: [
   "_build/install/default/lib/raytrace/raytrace.cmxs"
 ]
 bin: [
+  "_build/install/default/bin/draw_arc"
   "_build/install/default/bin/main"
 ]

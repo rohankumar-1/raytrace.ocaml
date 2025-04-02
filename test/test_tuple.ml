@@ -2,7 +2,7 @@ open Raytrace.Tuple
 open OUnit2
 
 let test_tuple_pnt _ = 
-  let t = point (4.3, -4.2, 3.1) in
+  let t = point 4.3 (-4.2) 3.1 in
   assert_equal 4.3 t.x;
   assert_equal (-4.2) t.y;
   assert_equal 3.1 t.z;
@@ -12,7 +12,7 @@ let test_tuple_pnt _ =
 ;;
 
 let test_tuple_vec _ = 
-  let t = vector (4.3, -4.2, 3.1) in
+  let t = vector 4.3 (-4.2) 3.1 in
   assert_equal 4.3 t.x;
   assert_equal (-4.2) t.y;
   assert_equal 3.1 t.z;
@@ -22,7 +22,7 @@ let test_tuple_vec _ =
 ;;
 
 let test_pnt _ = 
-    let p = point (4., -4., 3.) in
+    let p = point 4. (-4.) 3. in
     let t = {x=4.; y=(-4.); z=3.; w=1.} in
     assert_equal p.w t.w;
     assert_equal p.x t.x;
@@ -31,7 +31,7 @@ let test_pnt _ =
 ;;
 
 let test_vec _ = 
-  let p = vector (4., -4., 3.) in
+  let p = vector 4. (-4.) 3. in
   let t = {x=4.; y=(-4.); z=3.; w=0.} in
   assert_equal p.w t.w;
   assert_equal p.x t.x;
@@ -50,8 +50,8 @@ let test_add _ =
 ;;
 
 let test_sub_1 _ = 
-  let t1 = point (3., 2., 1.) in
-  let t2 = point (5., 6., 7.) in
+  let t1 = point 3. 2. 1. in
+  let t2 = point 5. 6. 7. in
   let s = sub_tup t1 t2 in
   assert_equal s.w 0.0;
   assert_equal s.x (-2.0);
@@ -60,8 +60,8 @@ let test_sub_1 _ =
 ;;
 
 let test_sub_2 _ = 
-  let t1 = point (3., 2., 1.) in
-  let t2 = vector (5., 6., 7.) in
+  let t1 = point 3. 2. 1. in
+  let t2 = vector 5. 6. 7. in
   let s = sub_tup t1 t2 in
   assert_equal s.w 1.0;
   assert_equal s.x (-2.0);
@@ -70,8 +70,8 @@ let test_sub_2 _ =
 ;;
 
 let test_sub_3 _ = 
-  let t1 = vector (3., 2., 1.) in
-  let t2 = vector (5., 6., 7.) in
+  let t1 = vector 3. 2. 1. in
+  let t2 = vector 5. 6. 7. in
   let s = sub_tup t1 t2 in
   assert_equal s.w 0.0;
   assert_equal s.x (-2.0);
@@ -107,22 +107,22 @@ let test_scalar_div _ =
 ;;
 
 let test_magnitude_1 _ =
-  let t1 = vector (1., 2., 3.) in
+  let t1 = vector 1. 2. 3. in
   assert_equal (sqrt 14.) (magnitude t1) 
 ;;
 
 let test_magnitude_2 _ =
-  let t1 = vector (0., 0., 1.) in
+  let t1 = vector 0. 0. (1.) in
   assert_equal (1.) (magnitude t1) 
 ;;
 
 let test_magnitude_3 _ =
-  let t1 = vector (-1., -2., -3.) in
+  let t1 = vector (-1.) (-2.) (-3.) in
   assert_equal (sqrt 14.) (magnitude t1) 
 ;;
 
 let test_norm _ =
-  let t1 = vector (-4., 0., 0.) in
+  let t1 = vector (-4.) 0. 0. in
   let s = norm t1 in
   assert_equal s.x (-1.0);
   assert_equal s.y (0.0);
@@ -131,14 +131,14 @@ let test_norm _ =
 ;;
 
 let test_dot _ = 
-  let t1 = vector (1., 2., 3.) in
-  let t2 = vector (2., 3., 4.) in
+  let t1 = vector 1. 2. 3. in
+  let t2 = vector 2. 3. 4. in
   assert_equal (dot t1 t2) 20. ;
 ;;
 
 let test_cross _ =
-  let t1 = vector (1., 2., 3.) in
-  let t2 = vector (2., 3., 4.) in
+  let t1 = vector 1. 2. 3. in
+  let t2 = vector 2. 3. 4. in
   let s1 = t1 *@ t2 in
   let s2 = t2 *@ t1 in
   assert_equal s1.x (-1.0);

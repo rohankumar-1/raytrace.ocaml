@@ -1,4 +1,5 @@
-(executable
- (public_name main)
- (name main)
+(executables
+ (names main draw_arc)
+ (public_names main draw_arc)
  (libraries raytrace))
+
