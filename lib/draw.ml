@@ -22,13 +22,41 @@ type canvas = {
 
 let scale_format_pixel pixel = 
   match pixel with
-  | Blank -> "0 0 0"
-  | Color c -> Printf.sprintf "%d %d %d" (scale c.red) (scale c.green) (scale c.blue)
+  | Blank -> Printf.sprintf "%-3d %-3d %-3d" 0 0 0
+  | Color c -> Printf.sprintf "%-3d %-3d %-3d" (scale c.red) (scale c.green) (scale c.blue)
 
-let make_canvas ~h ~w = {height=h; width=w; grid= Array.make_matrix h w Blank}
+let make_canvas ~w ~h = {width=w; height=h; grid= Array.make_matrix w h Blank}
 
-let write_canvas ~oc ~can =
+let write_canvas_P3 ~oc ~can =
   (* following line writes initial text (format, dims, color scale) to file*)
-  Printf.fprintf oc "P3\n%d %d\n255\n" can.height can.width;
-  Array.iter (fun x -> Array.iter (fun y -> Printf.fprintf oc "%s " (scale_format_pixel y);) x ; Printf.fprintf oc "%s\n" "") can.grid
+  Printf.fprintf oc "P3\n%d %d\n255\n" can.width can.height;
+  for y = 0 to pred can.height do
+    for x = 0 to pred can.width do 
+      Printf.fprintf oc "%-12s  " (scale_format_pixel can.grid.(x).(y));
+    done;
+    Printf.fprintf oc "\n,";
+  done;
 ;; 
+
+let write_canvas_P6 ~oc ~can =
+  Printf.fprintf oc "P6 %d %d 255\n" can.width can.height;
+  for y = 0 to pred can.height do
+    for x = 0 to pred can.width do
+      match can.grid.(x).(y) with
+        | Blank -> begin
+          output_char oc (char_of_int 0);
+          output_char oc (char_of_int 0);
+          output_char oc (char_of_int 0);
+        end
+        | Color c -> begin
+          output_char oc (char_of_int (scale c.red));
+          output_char oc (char_of_int (scale c.green));
+          output_char oc (char_of_int (scale c.blue));
+        end
+    done;
+  done;
+  output_char oc '\n';
+  flush oc;
+;;
+
+  
