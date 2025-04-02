@@ -20,7 +20,7 @@ type canvas = {
   grid: pixel array array
 }
 
-let scale_format_pixel pixel = 
+let pixel_to_string_P3 pixel = 
   match pixel with
   | Blank -> Printf.sprintf "%-3d %-3d %-3d" 0 0 0
   | Color c -> Printf.sprintf "%-3d %-3d %-3d" (scale c.red) (scale c.green) (scale c.blue)
@@ -32,7 +32,7 @@ let write_canvas_P3 ~oc ~can =
   Printf.fprintf oc "P3\n%d %d\n255\n" can.width can.height;
   for y = 0 to pred can.height do
     for x = 0 to pred can.width do 
-      Printf.fprintf oc "%-12s  " (scale_format_pixel can.grid.(x).(y));
+      Printf.fprintf oc "%-12s  " (pixel_to_string_P3 can.grid.(x).(y));
     done;
     Printf.fprintf oc "\n,";
   done;

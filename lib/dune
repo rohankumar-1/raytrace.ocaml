@@ -1,4 +1,4 @@
 (library
  (name raytrace)
- (modules tuple draw util)
+ (modules tuple draw util data)
  (public_name raytrace))
