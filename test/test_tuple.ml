@@ -1,4 +1,4 @@
-open Raytrace.Tuple
+open Raytrace.Data
 open OUnit2
 
 let test_tuple_pnt _ = 
@@ -81,7 +81,7 @@ let test_sub_3 _ =
 
 let test_negate _ = 
   let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
-  let s = ~~ t1 in
+  let s = negate t1 in
   assert_equal s.w (4.0);
   assert_equal s.x (-1.0);
   assert_equal s.y (2.0);
@@ -90,7 +90,7 @@ let test_negate _ =
 
 let test_scalar_mult _ = 
   let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
-  let s = t1 *** 3.5 in
+  let s = mult_tup t1 3.5 in
   assert_equal s.w (-14.0);
   assert_equal s.x (3.5);
   assert_equal s.y (-7.0);
@@ -99,7 +99,7 @@ let test_scalar_mult _ =
 
 let test_scalar_div _ =
   let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
-  let s = t1 // 2. in
+  let s = div_tup t1 2. in
   assert_equal s.w (-2.0);
   assert_equal s.x (0.5);
   assert_equal s.y (-1.0);
@@ -139,8 +139,8 @@ let test_dot _ =
 let test_cross _ =
   let t1 = vector 1. 2. 3. in
   let t2 = vector 2. 3. 4. in
-  let s1 = t1 *@ t2 in
-  let s2 = t2 *@ t1 in
+  let s1 = cross t1 t2 in
+  let s2 = cross t2 t1 in
   assert_equal s1.x (-1.0);
   assert_equal s1.y (2.0);
   assert_equal s1.z (-1.0);

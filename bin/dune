@@ -1,5 +1,5 @@
 (executables
- (names main draw_arc test)
- (public_names main draw_arc test)
+ (names main draw_arc)
+ (public_names main draw_arc)
  (libraries raytrace))
 

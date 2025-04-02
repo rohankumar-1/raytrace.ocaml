@@ -27,11 +27,8 @@ let draw_arc can env p =
       ()
     end
     else begin
-      can.grid.(pix_y).(pix_x) <- Color (build_color 1. 1. 0.) ;
-      let newP = tick env a in
-      Printf.fprintf stdout "%d %d\n" (int_of_float a.pos.x) (can.height - int_of_float a.pos.y);
-      (* Printf.fprintf stdout "%f %f\n" (a.pos.x) (a.pos.y); *)
-      aux newP;
+      can.grid.(pix_x).(pix_y) <- Color (build_color 1. 1. 0.) ;
+      aux (tick env a);
       ()
     end
   in aux p
@@ -47,9 +44,9 @@ let () =
     vector 0. (-0.1) 0.,
     vector (-0.01) 0. 0. 
   ) in 
-  let c = make_canvas ~h:900 ~w:550 in
+  let c = make_canvas ~w:900 ~h:550 in
   let oc = open_out "test.ppm" in
     draw_arc c environment start;
-    write_canvas ~oc:oc ~can:c;
+    write_canvas_P6 ~oc:oc ~can:c;
 
     
