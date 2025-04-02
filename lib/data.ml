@@ -3,9 +3,16 @@ open Util
 type tuple = {x:float ; y:float ; z:float ; w:float}
 let point x y z = {x=x ; y=y ; z=z ; w=1.0} 
 let vector x y z = {x=x; y=y ; z=z ; w=0.0} 
+let t_from_mat a = {x=a.(0).(0); y=a.(1).(0); z=a.(2).(0); w=a.(3).(0)}
 
 let is_point t = t.w=1.0
 let is_vector t = t.w=0.0
+
+let tequal a b = 
+  equal_float a.x b.x &&
+  equal_float a.y b.y && 
+  equal_float a.z b.z &&
+  equal_float a.w b.w 
 
 
 (* UNARY OPS *)

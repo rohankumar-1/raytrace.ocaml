@@ -1,5 +1,5 @@
 
-open Raytrace.Tuple
+open Raytrace.Data
 (* open Raytrace.Util *)
 open Raytrace.Draw
 
@@ -14,8 +14,8 @@ type projectile = {
 }
 
 let tick env proj = {
-  pos = proj.pos ++ proj.vel;
-  vel = proj.vel ++ (fst env) ++ (snd env)
+  pos = add_tup proj.pos proj.vel;
+  vel = add_tup (add_tup proj.vel (fst env)) (snd env)
 }
 
 
@@ -38,7 +38,7 @@ let draw_arc can env p =
 let () =
   let start = {
     pos = point 0. 1. 0. ;
-    vel = (norm (vector 1. 1.8 0.)) *** 11.25
+    vel = mult_tup (norm (vector 1. 1.8 0.)) 11.25
   } in
   let environment = (
     vector 0. (-0.1) 0.,
