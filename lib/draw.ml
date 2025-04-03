@@ -7,8 +7,9 @@ let add_clr t1 t2 = {red = t1.red +. t2.red; green = t1.green +. t2.green; blue 
 let sub_clr t1 t2 = {red = t1.red -. t2.red; green = t1.green -. t2.green; blue = t1.blue -. t2.blue}
 let mult_clr t c = {red = t.red *. c; green = t.green *. c; blue = t.blue *. c}
 let hadamard t1 t2 = {red = t1.red *. t2.red; green = t1.green *. t2.green; blue = t1.blue *. t2.blue}
-let equal_clr a b = equal_float a.red b.red && equal_float a.green b.green && equal_float a.blue b.blue
+let cequal a b = (equal_float a.red b.red) && (equal_float a.green b.green) && (equal_float a.blue b.blue)
 
+let print_clr a = Printf.printf "\ncolor is [r: %4.2f g: %4.2f b: %4.2f]" a.red a.green a.blue
 
 type pixel =
   | Color of color

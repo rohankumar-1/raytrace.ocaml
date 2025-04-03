@@ -1,4 +1,4 @@
 (tests
- (names test_tuple test_draw test_matrix test_transform test_ray)
+ (names test_tuple test_draw test_matrix test_transform test_ray test_light)
  (libraries raytrace ounit2))
 

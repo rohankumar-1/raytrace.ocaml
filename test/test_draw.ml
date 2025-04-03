@@ -41,7 +41,7 @@ let test_hadamard _ =
   let c2 = {red=0.2; green=(-0.4);blue=0.7} in
   let s = hadamard c1 c2 in
   let g_truth = {red=0.1; green=(-0.16); blue=0.49} in
-  assert_bool "checking using float error" (equal_clr s g_truth);
+  assert_bool "checking using float error" (cequal s g_truth);
 ;;
 
 

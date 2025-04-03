@@ -63,3 +63,6 @@ let chain_transforms lst =
     | t :: [] -> matmul t acc
     | t :: u -> aux (matmul t acc) u 
   in aux (identity 4) lst
+
+
+let reflect v n = sub_tup v (mult_tup n (2. *. dot v n))
