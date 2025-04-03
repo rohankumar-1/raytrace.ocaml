@@ -41,6 +41,7 @@ let cross a b =
 
 (* matrices for now are just (float array array) *)
 exception UnequalDims of string;;
+type matrix = float array array
 
 let m_from_list = function
   | [] | [[]] -> Array.make_matrix 0 0 0.
