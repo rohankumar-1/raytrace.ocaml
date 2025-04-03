@@ -49,7 +49,7 @@ class sphere = object (self)
 end
 
 type intersection = {
-  obj : int;
+  obj : sphere ref option;
   t : float
 }
 
@@ -62,8 +62,10 @@ let hit lst =
       else begin
         aux a u
       end;
-    in aux {t=Float.max_float; obj=(-1)} lst
+    in aux {t=Float.max_float; obj=None} lst
   ;;
+
+let get_sphere i = !(Option.get i.obj)
 
 module Ray : sig
   (* TYPES DEFINED BY RAY*)
@@ -99,9 +101,10 @@ end = struct
     if discriminant < 0. then
       []
     else begin
+      let s_ref = ref s in 
       [
-        {t=(((Float.neg b) -. (sqrt discriminant)) /. (2. *. a)); obj=(Oo.id s)};
-        {t=(((Float.neg b) +. (sqrt discriminant)) /. (2. *. a)); obj=(Oo.id s)}
+        {t=(((Float.neg b) -. (sqrt discriminant)) /. (2. *. a)); obj=(Some s_ref)};
+        {t=(((Float.neg b) +. (sqrt discriminant)) /. (2. *. a)); obj=(Some s_ref)}
       ]
     end 
 end

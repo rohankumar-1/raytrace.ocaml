@@ -43,11 +43,12 @@ let () =
       (* get hit *)
       let h = hit xs in 
       (* if there is an intersection (hit xs != 0), then we know that this pixel is part of the silhoutte *)
-      if h.obj != (-1) then begin
+      if h.obj != None then begin
         let pt = Ray.position r h.t in 
-        let normal = sph#normal_at pt in 
+        let target_sph = get_sphere h in
+        let normal = target_sph#normal_at pt in 
         let eye = mult_tup (Ray.get_dir r) (-1.) in 
-        let final_clr = lighting sph#get_material light pt eye normal in 
+        let final_clr = lighting target_sph#get_material light pt eye normal in 
         can.grid.(x).(y) <- Color final_clr;
       end
     done;

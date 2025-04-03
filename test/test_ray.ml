@@ -12,20 +12,20 @@ let test_ray_intersect _ =
   let s = new sphere in
   let r = Ray.make_ray ~p:(point 0. 0. 5.) ~v:(vector 0. 0. 1.) in
   let res = Ray.intersect r s in
-  assert_equal (List.nth res 0).obj (Oo.id s)
+  assert_equal (List.nth res 0).obj (Some (ref s))
 
 let test_intersection_obj _ = 
   let s = new sphere in
-  let i = {obj=(Oo.id s); t=3.5} in
+  let i = {obj=(Some (ref s)); t=3.5} in
   assert_equal i.t 3.5;
-  assert_equal i.obj (Oo.id s)
+  assert_equal i.obj (Some (ref s))
 
 
 let test_hit _ = 
   let s = new sphere in 
-  let i1 = {obj=(Oo.id s); t=1.} in
-  let i2 = {obj=(Oo.id s); t=2.} in
-  let i3 = {obj=(Oo.id s); t=(-1.)} in
+  let i1 = {obj=(Some (ref s)); t=1.} in
+  let i2 = {obj=(Some (ref s)); t=2.} in
+  let i3 = {obj=(Some (ref s)); t=(-1.)} in
   let res = hit [i1;i2;i3] in 
   assert_equal i1.t res.t
 

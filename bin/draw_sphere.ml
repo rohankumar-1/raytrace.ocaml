@@ -42,7 +42,7 @@ let () =
       let xs = Ray.intersect r sph in 
 
       (* if there is an intersection (hit xs != 0), then we know that this pixel is part of the silhoutte *)
-      if (hit xs).obj != (-1) then begin
+      if (hit xs).obj != None then begin
         can.grid.(x).(y) <- Color col ;
       end
     done;
