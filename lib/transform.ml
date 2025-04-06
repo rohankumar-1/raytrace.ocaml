@@ -60,8 +60,8 @@ let shear dxy dxz dyx dyz dzx dzy =
 let chain_transforms lst = 
   let rec aux acc = function
     | [] -> identity 4
-    | t :: [] -> matmul t acc
-    | t :: u -> aux (matmul t acc) u 
+    | t :: [] -> matmul acc t
+    | t :: u -> aux (matmul acc t) u 
   in aux (identity 4) lst
 
 

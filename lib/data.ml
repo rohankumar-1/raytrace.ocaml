@@ -1,8 +1,10 @@
-open Util
+
+let equal_float a b = (abs_float (a -. b)) < 0.0001
 
 type tuple = {x:float ; y:float ; z:float ; w:float}
 let point x y z = {x=x ; y=y ; z=z ; w=1.0} 
 let vector x y z = {x=x; y=y ; z=z ; w=0.0} 
+let print_tup t = Printf.printf "(%6.3f, %6.3f, %6.3f, %6.3f)" t.x t.y t.z t.w
 let t_from_mat a = {x=a.(0).(0); y=a.(1).(0); z=a.(2).(0); w=a.(3).(0)}
 
 let is_point t = t.w=1.0
@@ -62,12 +64,13 @@ let get_dims = function
 
 let get_row a i = a.(i)
 let get_col a i = Array.map (fun x -> x.(i)) a
-let mult_arr a b = Array.map2 (fun x y -> x *. y) a b
+let mult_row a b = Array.map2 (fun x y -> x *. y) a b
 let identity n = Array.init_matrix n n (fun x y -> if x=y then 1. else 0.)
 
 let mequal a b = Array.for_all2 (fun x y -> Array.for_all2 (fun x y -> equal_float x y) x y) a b
 let madd a b = Array.map2 (fun x y -> Array.map2 (fun x y -> x +. y) x y) a b 
 let msub a b = Array.map2 (fun x y -> Array.map2 (fun x y -> x -. y) x y) a b 
+let mmult a b = Array.map2 (fun x y -> mult_row x y) a b
 let transpose a = 
   let dx, dy = get_dims a in 
   Array.init_matrix dx dy (fun i j -> a.(j).(i))
@@ -131,7 +134,7 @@ let matmul a b =
     let res = Array.make_matrix (fst dimA) (snd dimB) 0. in
     for i = 0 to pred (fst dimA) do
       for j = 0 to pred (snd dimB) do
-        res.(i).(j) <- Array.fold_left (+.) 0. (mult_arr (get_row a i) (get_col b j));
+        res.(i).(j) <- Array.fold_left (+.) 0. (mult_row (get_row a i) (get_col b j));
       done;
     done;
     res

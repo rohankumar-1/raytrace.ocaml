@@ -27,7 +27,7 @@ let draw_arc can env p =
       ()
     end
     else begin
-      can.grid.(pix_x).(pix_y) <- Color (build_color 1. 1. 0.) ;
+      can.grid.(pix_x).(pix_y) <- Color (make_color 1. 1. 0.) ;
       aux (tick env a);
       ()
     end

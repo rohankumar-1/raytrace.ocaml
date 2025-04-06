@@ -1,4 +1,4 @@
 (library
  (name raytrace)
- (modules draw util data transform graphics)
+ (modules draw data transform graphics)
  (public_name raytrace))

@@ -1,5 +1,4 @@
 open Raytrace.Data
-open Raytrace.Util
 open OUnit2
 
 let test_matrix_from_list _ = 

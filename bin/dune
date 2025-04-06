@@ -1,5 +1,5 @@
 (executables
- (names main draw_arc draw_sphere render_sphere)
- (public_names main draw_arc draw_sphere render_sphere)
+ (names main draw_arc draw_sphere render_sphere render_scene)
+ (public_names main draw_arc draw_sphere render_sphere render_scene)
  (libraries raytrace))
 

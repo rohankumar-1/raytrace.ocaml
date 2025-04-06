@@ -1,7 +1,7 @@
-open Util
+open Data
 
 type color = {red:float ; green:float ; blue:float}
-let build_color r g b = {red=r; green=g; blue=b}
+let make_color r g b = {red=r; green=g; blue=b}
 
 let add_clr t1 t2 = {red = t1.red +. t2.red; green = t1.green +. t2.green; blue = t1.blue +. t2.blue}
 let sub_clr t1 t2 = {red = t1.red -. t2.red; green = t1.green -. t2.green; blue = t1.blue -. t2.blue}
@@ -11,9 +11,19 @@ let cequal a b = (equal_float a.red b.red) && (equal_float a.green b.green) && (
 
 let print_clr a = Printf.printf "\ncolor is [r: %4.2f g: %4.2f b: %4.2f]" a.red a.green a.blue
 
+let scale_clr x = 
+  let scaled = 255. *. x in
+  if scaled > 255. then 255
+  else if scaled < 0. then 0
+  else int_of_float scaled
+
 type pixel =
   | Color of color
   | Blank
+
+let pix_to_col = function
+  | Color c -> c
+  | Blank -> make_color 0. 0. 0.
 
 type canvas = {
   height: int;
@@ -24,7 +34,7 @@ type canvas = {
 let pixel_to_string_P3 pixel = 
   match pixel with
   | Blank -> Printf.sprintf "%-3d %-3d %-3d" 0 0 0
-  | Color c -> Printf.sprintf "%-3d %-3d %-3d" (scale c.red) (scale c.green) (scale c.blue)
+  | Color c -> Printf.sprintf "%-3d %-3d %-3d" (scale_clr c.red) (scale_clr c.green) (scale_clr c.blue)
 
 let make_canvas ~w ~h = {width=w; height=h; grid= Array.make_matrix w h Blank}
 
@@ -50,9 +60,9 @@ let write_canvas_P6 ~oc ~can =
           output_char oc (char_of_int 0);
         end
         | Color c -> begin
-          output_char oc (char_of_int (scale c.red));
-          output_char oc (char_of_int (scale c.green));
-          output_char oc (char_of_int (scale c.blue));
+          output_char oc (char_of_int (scale_clr c.red));
+          output_char oc (char_of_int (scale_clr c.green));
+          output_char oc (char_of_int (scale_clr c.blue));
         end
     done;
   done;

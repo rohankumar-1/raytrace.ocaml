@@ -40,7 +40,7 @@ let test_chain_func _ =
   let a = rotate_x (Float.pi /. 2.) in
   let b = scale 5. 5. 5. in
   let c = translate 10. 5. 7. in 
-  let ch = (chain_transforms [a;b;c]) in
+  let ch = (chain_transforms [c;b;a]) in
   assert_bool "testing chain op" (mequal (matmul ch (m_from_list [[1.];[0.];[1.];[1.]])) (m_from_list [[15.];[0.];[7.];[1.]]))
   
 let suite = 

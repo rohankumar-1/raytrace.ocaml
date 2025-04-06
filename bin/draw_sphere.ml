@@ -26,7 +26,7 @@ let () =
   let half = wall_size /. 2. in 
 
   (* sphere is the object we are capturing the silhouette of, and color is the color of that silhouette *)
-  let col = build_color 1. 0. 0. in 
+  let col = make_color 1. 0. 0. in 
   let sph = new sphere in
 
   (* now, the routine to project each ray *)

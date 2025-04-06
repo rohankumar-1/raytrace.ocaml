@@ -1,14 +1,12 @@
 open Raytrace.Draw
 open OUnit2
 
-
 let test_create_color _ =
   let col = {red=0.5; green=0.4;blue=0.7} in
   assert_equal col.red 0.5;
   assert_equal col.green 0.4;
   assert_equal col.blue 0.7;
 ;;
-
 
 let test_add_color _ =
   let c1 = {red=0.5; green=0.4;blue=0.7} in
