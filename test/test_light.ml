@@ -1,8 +1,9 @@
 open OUnit2
-open Raytrace.Graphics
-open Raytrace.Data
-open Raytrace.Transform
-open Raytrace.Draw
+open Graphics
+open Data
+open Transform
+open Draw
+open Shapes
 
 let test_normal_at _ = 
   let sph = new sphere in 

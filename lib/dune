@@ -1,4 +1,7 @@
+
 (library
  (name raytrace)
- (modules draw data transform graphics)
- (public_name raytrace))
+ (modules :standard)
+ (wrapped false)
+ (public_name raytrace)
+)

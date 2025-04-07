@@ -1,4 +1,4 @@
-open Raytrace.Data
+open Data
 open OUnit2
 
 let test_tuple_pnt _ = 
@@ -42,7 +42,7 @@ let test_vec _ =
 let test_add _ = 
   let t1 = {x=3.; y=(-2.); z=5.; w=1.} in
   let t2 = {x=(-2.); y=3.; z=1.; w=0.} in
-  let s = add_tup t1 t2 in
+  let s = tadd t1 t2 in
   assert_equal s.w 1.0;
   assert_equal s.x 1.0;
   assert_equal s.y 1.0;
@@ -52,7 +52,7 @@ let test_add _ =
 let test_sub_1 _ = 
   let t1 = point 3. 2. 1. in
   let t2 = point 5. 6. 7. in
-  let s = sub_tup t1 t2 in
+  let s = tsub t1 t2 in
   assert_equal s.w 0.0;
   assert_equal s.x (-2.0);
   assert_equal s.y (-4.0);
@@ -62,7 +62,7 @@ let test_sub_1 _ =
 let test_sub_2 _ = 
   let t1 = point 3. 2. 1. in
   let t2 = vector 5. 6. 7. in
-  let s = sub_tup t1 t2 in
+  let s = tsub t1 t2 in
   assert_equal s.w 1.0;
   assert_equal s.x (-2.0);
   assert_equal s.y (-4.0);
@@ -72,7 +72,7 @@ let test_sub_2 _ =
 let test_sub_3 _ = 
   let t1 = vector 3. 2. 1. in
   let t2 = vector 5. 6. 7. in
-  let s = sub_tup t1 t2 in
+  let s = tsub t1 t2 in
   assert_equal s.w 0.0;
   assert_equal s.x (-2.0);
   assert_equal s.y (-4.0);
@@ -81,7 +81,7 @@ let test_sub_3 _ =
 
 let test_negate _ = 
   let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
-  let s = negate t1 in
+  let s = tneg t1 in
   assert_equal s.w (4.0);
   assert_equal s.x (-1.0);
   assert_equal s.y (2.0);
@@ -90,7 +90,7 @@ let test_negate _ =
 
 let test_scalar_mult _ = 
   let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
-  let s = mult_tup t1 3.5 in
+  let s = tmult t1 3.5 in
   assert_equal s.w (-14.0);
   assert_equal s.x (3.5);
   assert_equal s.y (-7.0);
@@ -99,7 +99,7 @@ let test_scalar_mult _ =
 
 let test_scalar_div _ =
   let t1 = {x=1.; y=(-2.); z=3.; w=(-4.)} in
-  let s = div_tup t1 2. in
+  let s = tdiv t1 2. in
   assert_equal s.w (-2.0);
   assert_equal s.x (0.5);
   assert_equal s.y (-1.0);

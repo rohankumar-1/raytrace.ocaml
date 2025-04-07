@@ -1,12 +1,13 @@
 open OUnit2
-open Raytrace.Graphics
-open Raytrace.Draw
-open Raytrace.Data
-open Raytrace.Transform
+open Graphics
+open Draw
+open Data
+open Transform
+open Shapes
 
 let w = default_world ();;
 let test_intersect _ = 
-  let r =  Ray.make_ray ~p:(point 0. 0. (-5.)) ~v:(vector 0. 0. 1.) in 
+  let r =  Ray.make ~p:(point 0. 0. (-5.)) ~v:(vector 0. 0. 1.) in 
 
   let xs = intersect_world w r in
   assert_equal (List.length xs) 4;
@@ -18,7 +19,7 @@ let test_intersect _ =
 
 
 let test_prep_comp _ = 
-  let r = Ray.make_ray ~p:(point 0. 0. (-5.)) ~v:(vector 0. 0. 1.) in 
+  let r = Ray.make ~p:(point 0. 0. (-5.)) ~v:(vector 0. 0. 1.) in 
   let sph = ref new sphere in 
   let i = {obj=(Some sph); t=4.} in
   let comp = prepare_computations i r in 
@@ -29,7 +30,7 @@ let test_prep_comp _ =
 
 
 let test_prep_comp_2 _ = 
-  let r = Ray.make_ray ~p:(point 0. 0. 0.) ~v:(vector 0. 0. 1.) in 
+  let r = Ray.make ~p:(point 0. 0. 0.) ~v:(vector 0. 0. 1.) in 
   let sph = ref new sphere in 
   let i = {obj=(Some sph); t=1.} in
   let comp = prepare_computations i r in 
@@ -82,13 +83,13 @@ let test_view_transform _ =
 
 
 let test_color_at _ = 
-  let r = Ray.make_ray ~p:(point 0. 0. (-5.)) ~v:(vector 0. 1. 0.) in 
+  let r = Ray.make ~p:(point 0. 0. (-5.)) ~v:(vector 0. 1. 0.) in 
   let c = color_at w r in 
   assert_bool "" (cequal (pix_to_col c) (make_color 0. 0. 0.))
 
 
 let test_color_at_2 _ = 
-  let r = Ray.make_ray ~p:(point 0. 0. (-5.)) ~v:(vector 0. 0. 1.) in 
+  let r = Ray.make ~p:(point 0. 0. (-5.)) ~v:(vector 0. 0. 1.) in 
   let c = color_at w r in 
   assert_bool "" (cequal (pix_to_col c) (make_color 0.38066 0.47583 0.2855))
 

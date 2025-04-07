@@ -1,9 +1,9 @@
 open OUnit2
-open Raytrace.Graphics
-open Raytrace.Draw
-open Raytrace.Data
-(* open Raytrace.Transform
-open Raytrace.Util *)
+open Graphics
+open Draw
+open Data
+(* open Transform
+open Util *)
 
 
 let m = make_material ();;

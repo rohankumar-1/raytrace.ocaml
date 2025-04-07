@@ -1,6 +1,7 @@
-open Raytrace.Draw
-open Raytrace.Graphics
-open Raytrace.Data
+open Draw
+open Graphics
+open Data
+open Shapes
 
 let () = 
   (* ray_origin is where our "camera" is from, i.e. where the rays will start from *)
@@ -37,8 +38,8 @@ let () =
       let pos = point world_x world_y wall_z in 
 
       (* now, we get the ray, and intersect it with the sphere *)
-      let r = (Ray.make_ray ~p:ray_origin ~v:(norm (sub_tup pos ray_origin))) in
-      let xs = Ray.intersect r sph in 
+      let r = (Ray.make ~p:ray_origin ~v:(norm (tsub pos ray_origin))) in
+      let xs = intersect r sph in 
 
       (* get hit *)
       let h = hit xs in 
@@ -47,7 +48,7 @@ let () =
         let pt = Ray.position r h.t in 
         let target_sph = get_sphere h in
         let normal = target_sph#normal_at pt in 
-        let eye = mult_tup (Ray.get_dir r) (-1.) in 
+        let eye = tmult (Ray.get_dir r) (-1.) in 
         let final_clr = lighting target_sph#get_material light pt eye normal false in 
         can.grid.(x).(y) <- final_clr;
       end

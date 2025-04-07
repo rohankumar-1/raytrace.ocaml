@@ -1,7 +1,7 @@
 
-open Raytrace.Data
-(* open Raytrace.Util *)
-open Raytrace.Draw
+open Data
+(* open Util *)
+open Draw
 
 (*
 This file defines a projectile in terms of tuples of position, and then uses this projectile and its movement to write an arc 
@@ -14,8 +14,8 @@ type projectile = {
 }
 
 let tick env proj = {
-  pos = add_tup proj.pos proj.vel;
-  vel = add_tup (add_tup proj.vel (fst env)) (snd env)
+  pos = tadd proj.pos proj.vel;
+  vel = tadd (tadd proj.vel (fst env)) (snd env)
 }
 
 
@@ -38,7 +38,7 @@ let draw_arc can env p =
 let () =
   let start = {
     pos = point 0. 1. 0. ;
-    vel = mult_tup (norm (vector 1. 1.8 0.)) 11.25
+    vel = tmult (norm (vector 1. 1.8 0.)) 11.25
   } in
   let environment = (
     vector 0. (-0.1) 0.,

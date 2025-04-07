@@ -65,4 +65,4 @@ let chain_transforms lst =
   in aux (identity 4) lst
 
 
-let reflect v n = sub_tup v (mult_tup n (2. *. dot v n))
+let reflect v n = tsub v (tmult n (2. *. dot v n))
