@@ -7,7 +7,7 @@ open Shapes
 let () = 
   let floor = new sphere in
   floor#set_transform (scale 10. 0.01 10.);
-  floor#set_material (make_material ~c:(make_color 1.0 0.9 0.9) ~sp:0. ());
+  floor#set_material (make_material ~pat:(Plain(make_color 1.0 0.9 0.9)) ~sp:0. ());
 
   let left_wall = new sphere in 
   left_wall#set_transform (chain_transforms [
@@ -30,7 +30,7 @@ let () =
 
   let middle = new sphere in 
   middle#set_transform (translate (-0.5) 1. 0.5);
-  middle#set_material (make_material ~c:(make_color 0.1 1. 0.5) ~di:0.7 ~sp:0.3 ());
+  middle#set_material (make_material ~pat:(Plain(make_color 0.1 1. 0.5)) ~di:0.7 ~sp:0.3 ());
   
 
   let right = new sphere in 
@@ -38,7 +38,7 @@ let () =
     translate 1.5 0.5 (-0.5) ; 
     scale 0.5 0.5 0.5;
     ]);
-  right#set_material (make_material ~c:(make_color 0.5 1. 0.1) ~di:0.7 ~sp:0.3 ());
+  right#set_material (make_material ~pat:(Plain(make_color 0.5 1. 0.1)) ~di:0.7 ~sp:0.3 ());
   
   
   let left = new sphere in 
@@ -46,7 +46,7 @@ let () =
     translate (-1.5) 0.33 (-0.75) ; 
     scale 0.33 0.33 0.33;
     ]);
-  left#set_material (make_material ~c:(make_color 1. 0.8 0.1) ~di:0.7 ~sp:0.3 ());
+  left#set_material (make_material ~pat:(Plain(make_color 1. 0.8 0.1)) ~di:0.7 ~sp:0.3 ());
   
   let world = {
     light = make_light (make_color 1. 1. 1.) (point (-10.) 10. (-10.)); 
@@ -60,10 +60,10 @@ let () =
     ];
   } in 
 
-  let cam = make_camera 800 400 (Float.pi /. 3.) in 
+  let cam = make_camera 50 25 (Float.pi /. 3.) in 
   cam.tf := view_transform (point 0. 1.5 (-5.)) (point 0. 1. 0.) (vector 0. 1. 0.);
 
   let img = render cam world in 
-  let oc = open_out "output/scene_w_shadows.ppm" in 
+  let oc = open_out "output/scene_w_shadows_small.ppm" in 
   write_canvas_P6 ~oc:oc ~can:img
 

@@ -24,7 +24,7 @@ let () =
 
   (* sphere is the object we are capturing the silhouette of *)
   let sph = new sphere in
-  sph#set_material (make_material ~c:(make_color 1. 0.2 1.) ());
+  sph#set_material (make_material ~pat:(Plain (make_color 1. 0.2 1.)) ());
 
   (* MAIN DIFFERENCE, WE ADD A LIGHT SOURCE TO RENDER LIGHTING ON THE SPHERE *)
   let light = make_light (make_color 1. 1. 1.) (point (-10.) (10.) (-10.)) in 
@@ -46,10 +46,10 @@ let () =
       (* if there is an intersection (hit xs != 0), then we know that this pixel is part of the silhoutte *)
       if h.obj != None then begin
         let pt = Ray.position r h.t in 
-        let target_sph = get_sphere h in
+        let target_sph = get_shape h in
         let normal = target_sph#normal_at pt in 
         let eye = tmult (Ray.get_dir r) (-1.) in 
-        let final_clr = lighting target_sph#get_material light pt eye normal false in 
+        let final_clr = lighting target_sph light pt eye normal false in 
         can.grid.(x).(y) <- final_clr;
       end
     done;

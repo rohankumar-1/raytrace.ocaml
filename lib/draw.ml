@@ -5,12 +5,18 @@ open Data
 (***************************************************)
 type color = {red:float ; green:float ; blue:float}
 
+type pattern = 
+  | Stripe of float array array * (tuple -> color)
+  | Checker of float array array * (tuple -> color)
+  | Plain of color
+
 type material = {
-  col: color;
+  pattern: pattern;
   amb: float;
   dif: float;
   spec: float;
   shine: float;
+  (* reflective: float; *)
 }
 
 type pixel =
@@ -24,20 +30,34 @@ type canvas = {
 }
 
 
-
 (***************************************************)
 (* BUILDER FUNCTIONS *)
 (***************************************************)
 let make_color r g b = {red=r; green=g; blue=b}
-let make_material ?(am=0.1) ?(di=0.9) ?(sp=0.9) ?(sh=200.0) ?(c=(make_color 1. 1. 1.)) () = {
-  col=c;
+let make_material ?(am=0.1) ?(di=0.9) ?(sp=0.9) ?(sh=200.0) ?(pat=Plain (make_color 1. 1. 1.)) () = {
+  pattern=pat;
   amb=am;
   dif=di;
   spec=sp;
-  shine=sh
+  shine=sh;
+  (* reflective=reflect; *)
 }   
 let make_canvas ~w ~h = {width=w; height=h; grid= Array.make_matrix w h Blank}
 
+let make_plain c = Plain c
+
+let make_stripe (ca:color) (cb:color) tf =
+  Stripe (
+    tf,
+    fun pt -> if (int_of_float (floor (pt.x)) mod 2 = 0) then ca else cb
+  )
+
+let make_checked (ca:color) (cb:color) tf = 
+  Checker (
+    tf,
+    fun pt -> if (int_of_float ((floor pt.x) +. (floor pt.y) +. (floor pt.z)) mod 2) = 0 then ca else cb
+  )
+  
 
 (***************************************************)
 (* COLOR OPS *)
@@ -47,6 +67,11 @@ let csub t1 t2 = {red = t1.red -. t2.red; green = t1.green -. t2.green; blue = t
 let cmult t c = {red = t.red *. c; green = t.green *. c; blue = t.blue *. c}
 let hadamard t1 t2 = {red = t1.red *. t2.red; green = t1.green *. t2.green; blue = t1.blue *. t2.blue}
 let cequal a b = (equal_float a.red b.red) && (equal_float a.green b.green) && (equal_float a.blue b.blue)
+
+
+(***************************************************)
+(* PATTERN OPS *)
+(***************************************************)
 
 
 (***************************************************)
@@ -71,7 +96,7 @@ let pixel_to_string_P3 pixel =
 (***************************************************)
 (* PRINTING / IO FUNCTIONS *)
 (***************************************************)
-let print_clr a = Printf.printf "\ncolor is [r: %4.2f g: %4.2f b: %4.2f]" a.red a.green a.blue
+let print_clr a = Printf.printf "color is [r: %4.2f g: %4.2f b: %4.2f]" a.red a.green a.blue
 
 let write_canvas_P3 ~oc ~can =
   (* following line writes initial text (format, dims, color scale) to file*)
