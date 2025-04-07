@@ -1,13 +1,15 @@
-open Util
+
+let equal_float a b = (abs_float (a -. b)) < 0.0001
 
 type tuple = {x:float ; y:float ; z:float ; w:float}
+exception UnequalDims of string;;
+
 let point x y z = {x=x ; y=y ; z=z ; w=1.0} 
 let vector x y z = {x=x; y=y ; z=z ; w=0.0} 
-let t_from_mat a = {x=a.(0).(0); y=a.(1).(0); z=a.(2).(0); w=a.(3).(0)}
-
+let print_tup t = Printf.printf "(%6.3f, %6.3f, %6.3f, %6.3f)" t.x t.y t.z t.w
+let tup_from_mat a = {x=a.(0).(0); y=a.(1).(0); z=a.(2).(0); w=a.(3).(0)}
 let is_point t = t.w=1.0
 let is_vector t = t.w=0.0
-
 let tequal a b = 
   equal_float a.x b.x &&
   equal_float a.y b.y && 
@@ -16,7 +18,7 @@ let tequal a b =
 
 
 (* UNARY OPS *)
-let negate t = {x = t.x*.(-1.) ;  y = t.y *. (-1.) ; z = t.z *. (-1.) ; w = t.w *. (-1.)} (* ??? should the indicator (w) be negated *)
+let tneg t = {x = t.x*.(-1.) ;  y = t.y *. (-1.) ; z = t.z *. (-1.) ; w = t.w *. (-1.)} (* ??? should the indicator (w) be negated *)
 let magnitude t = sqrt (t.x *. t.x +. t.y *. t.y +. t.z *. t.z +. t.w *. t.w)
 let norm t = 
   let m = magnitude t in {
@@ -27,10 +29,10 @@ let norm t =
   }
 
 (* BINARY OPS *)
-let add_tup t1 t2 = {x = t1.x +. t2.x; y = t1.y +. t2.y; z = t1.z +. t2.z; w = t1.w +. t2.w}
-let sub_tup t1 t2 = {x = t1.x -. t2.x; y =  t1.y -. t2.y; z = t1.z -. t2.z; w = t1.w -. t2.w}
-let mult_tup tup c = {x = tup.x *. c; y = tup.y *. c; z = tup.z *. c; w = tup.w *. c}
-let div_tup tup c = {x = tup.x /. c; y =  tup.y /. c; z =  tup.z /. c; w =  tup.w /. c}
+let tadd t1 t2 = {x = t1.x +. t2.x; y = t1.y +. t2.y; z = t1.z +. t2.z; w = t1.w +. t2.w}
+let tsub t1 t2 = {x = t1.x -. t2.x; y =  t1.y -. t2.y; z = t1.z -. t2.z; w = t1.w -. t2.w}
+let tmult tup c = {x = tup.x *. c; y = tup.y *. c; z = tup.z *. c; w = tup.w *. c}
+let tdiv tup c = {x = tup.x /. c; y =  tup.y /. c; z =  tup.z /. c; w =  tup.w /. c}
 let dot t1 t2 = (t1.x *. t2.x) +. (t1.y *. t2.y) +. (t1.z *. t2.z) +. (t1.w *. t2.w)
 let cross a b = 
   vector 
@@ -38,16 +40,12 @@ let cross a b =
   ((a.z *. b.x) -. (a.x *. b.z))
   ((a.x *. b.y) -. (a.y *. b.x))
 
-
-(* matrices for now are just (float array array) *)
-exception UnequalDims of string;;
-type matrix = float array array
-
-let m_from_list = function
-  | [] | [[]] -> Array.make_matrix 0 0 0.
-  | t -> Array.of_list (List.map (fun x -> Array.of_list x) t)
+  
+let mat_from_list = function
+| [] | [[]] -> Array.make_matrix 0 0 0. 
+| t -> Array.of_list (List.map (fun x -> Array.of_list x) t)
 ;;
-let m_from_tuple t = [|[|t.x|] ; [|t.y|] ; [|t.z|] ; [|t.w|]|]
+let mat_from_tup t = [|[|t.x|] ; [|t.y|] ; [|t.z|] ; [|t.w|]|]
 
 let mat_to_string a = 
   let inner_op acc_in xi = acc_in ^ (Printf.sprintf "%8.4f , " xi) in
@@ -62,16 +60,17 @@ let get_dims = function
 
 let get_row a i = a.(i)
 let get_col a i = Array.map (fun x -> x.(i)) a
-let mult_arr a b = Array.map2 (fun x y -> x *. y) a b
+let mult_row a b = Array.map2 (fun x y -> x *. y) a b
 let identity n = Array.init_matrix n n (fun x y -> if x=y then 1. else 0.)
 
 let mequal a b = Array.for_all2 (fun x y -> Array.for_all2 (fun x y -> equal_float x y) x y) a b
 let madd a b = Array.map2 (fun x y -> Array.map2 (fun x y -> x +. y) x y) a b 
 let msub a b = Array.map2 (fun x y -> Array.map2 (fun x y -> x -. y) x y) a b 
+let mmult a b = Array.map2 (fun x y -> mult_row x y) a b
 let transpose a = 
   let dx, dy = get_dims a in 
   Array.init_matrix dx dy (fun i j -> a.(j).(i))
-;;
+
 let submatrix m n a =
   let ii, jj = (ref 0, ref 0) in
   let dx, dy = get_dims a in
@@ -91,37 +90,36 @@ let submatrix m n a =
   res
 
 let rec minor i j a = submatrix i j a |> determinant
-and cofactor i j a = 
-  let is_odd x = (x mod 2 != 0) in
-  if is_odd (i+j) then
-    (-1.) *. (minor i j a)
-  else
-    minor i j a
-and determinant a =
-  let det = ref 0. in
-  let dx, dy = get_dims a in
-  if dx = 2 then
-    (a.(0).(0) *. a.(1).(1)) -. (a.(0).(1) *. a.(1).(0))
-  else begin
-    for j = 0 to pred dy do 
-      det := (!det +. (a.(0).(j) *. (cofactor 0 j a)))
-    done;
-    !det
-  end
-;;
+  and cofactor i j a = 
+    let is_odd x = (x mod 2 != 0) in
+    if is_odd (i+j) then
+      (-1.) *. (minor i j a)
+    else
+      minor i j a
+  and determinant a =
+    let det = ref 0. in
+    let dx, dy = get_dims a in
+    if dx = 2 then
+      (a.(0).(0) *. a.(1).(1)) -. (a.(0).(1) *. a.(1).(0))
+    else begin
+      for j = 0 to pred dy do 
+        det := (!det +. (a.(0).(j) *. (cofactor 0 j a)))
+      done;
+      !det
+    end
 
 let invertible a = not (equal_float (determinant a) (0.))
 
 let invert a = 
-  let dx, dy = get_dims a in
-  let res = Array.make_matrix dx dy 0. in
-  let det = determinant a in
-  for i = 0 to pred dx do 
-    for j = 0 to pred dy do 
-      res.(j).(i) <- ((cofactor i j a) /. det)
-    done;
+let dx, dy = get_dims a in
+let res = Array.make_matrix dx dy 0. in
+let det = determinant a in
+for i = 0 to pred dx do 
+  for j = 0 to pred dy do 
+    res.(j).(i) <- ((cofactor i j a) /. det)
   done;
-  res
+done;
+res
 
 
 let matmul a b = 
@@ -131,13 +129,11 @@ let matmul a b =
     let res = Array.make_matrix (fst dimA) (snd dimB) 0. in
     for i = 0 to pred (fst dimA) do
       for j = 0 to pred (snd dimB) do
-        res.(i).(j) <- Array.fold_left (+.) 0. (mult_arr (get_row a i) (get_col b j));
+        res.(i).(j) <- Array.fold_left (+.) 0. (mult_row (get_row a i) (get_col b j));
       done;
     done;
     res
   end else
     raise (UnequalDims "dims of a and b do not match");
-
-
-
+;;
 

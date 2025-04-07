@@ -1,8 +1,9 @@
 open OUnit2
-open Raytrace.Graphics
-open Raytrace.Data
-open Raytrace.Transform
-open Raytrace.Draw
+open Graphics
+open Data
+open Transform
+open Draw
+open Shapes
 
 let test_normal_at _ = 
   let sph = new sphere in 
@@ -30,9 +31,9 @@ let pos = point 0. 0. 0.;;
 let test_light_1 _ = 
   let eyev = vector 0. 0. (-1.) in 
   let normv = vector 0. 0. (-1.) in 
-  let light = make_light (build_color 1. 1. 1.) (point 0. 0. (10.)) in 
-  let res = lighting m light pos eyev normv in 
-  assert_bool "check light (1)" (cequal res (build_color 0.1 0.1 0.1))
+  let light = make_light (make_color 1. 1. 1.) (point 0. 0. (10.)) in 
+  let res = lighting m light pos eyev normv false in 
+  assert_bool "check light (1)" (cequal (pix_to_col res) (make_color 0.1 0.1 0.1))
 
 let suite = 
   "Light tests" >::: [

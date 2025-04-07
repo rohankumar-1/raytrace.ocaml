@@ -1,9 +1,7 @@
-open Raytrace.Draw
-open Raytrace.Graphics
-open Raytrace.Data
-
-
-
+open Draw
+open Graphics
+open Data
+open Shapes
 
 
 let () = 
@@ -26,7 +24,7 @@ let () =
   let half = wall_size /. 2. in 
 
   (* sphere is the object we are capturing the silhouette of, and color is the color of that silhouette *)
-  let col = build_color 1. 0. 0. in 
+  let col = make_color 1. 0. 0. in 
   let sph = new sphere in
 
   (* now, the routine to project each ray *)
@@ -38,8 +36,8 @@ let () =
       let pos = point world_x world_y wall_z in 
 
       (* now, we get the ray, and intersect it with the sphere *)
-      let r = Ray.make_ray ~p:ray_origin ~v:(norm (sub_tup pos ray_origin)) in
-      let xs = Ray.intersect r sph in 
+      let r = Ray.make ~p:ray_origin ~v:(norm (tsub pos ray_origin)) in
+      let xs = intersect r sph in 
 
       (* if there is an intersection (hit xs != 0), then we know that this pixel is part of the silhoutte *)
       if (hit xs).obj != None then begin

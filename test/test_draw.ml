@@ -1,6 +1,5 @@
-open Raytrace.Draw
+open Draw
 open OUnit2
-
 
 let test_create_color _ =
   let col = {red=0.5; green=0.4;blue=0.7} in
@@ -9,11 +8,10 @@ let test_create_color _ =
   assert_equal col.blue 0.7;
 ;;
 
-
 let test_add_color _ =
   let c1 = {red=0.5; green=0.4;blue=0.7} in
   let c2 = {red=0.2; green=(-0.4);blue=0.7} in
-  let s = add_clr c1 c2 in
+  let s = cadd c1 c2 in
   assert_equal s.red 0.7;
   assert_equal s.green 0.0;
   assert_equal s.blue 1.4;
@@ -22,7 +20,7 @@ let test_add_color _ =
 let test_sub_color _ =
   let c1 = {red=0.5; green=0.4;blue=0.7} in
   let c2 = {red=0.2; green=(-0.4);blue=0.7} in
-  let s = sub_clr c1 c2 in
+  let s = csub c1 c2 in
   assert_equal s.red 0.3;
   assert_equal s.green 0.8;
   assert_equal s.blue 0.0;
@@ -30,7 +28,7 @@ let test_sub_color _ =
 
 let test_scalar_mult_color _ =
   let c1 = {red=0.5; green=0.4;blue=0.7} in
-  let s = mult_clr c1 2. in
+  let s = cmult c1 2. in
   assert_equal s.red 1.0;
   assert_equal s.green 0.8;
   assert_equal s.blue 1.4;
