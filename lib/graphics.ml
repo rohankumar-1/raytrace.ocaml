@@ -2,8 +2,9 @@ open Data
 open Draw
 open Transform
 open Shapes
+open Constants
 
-type intersection = { obj:sphere ref option ; t : float }
+type intersection = { obj:shape ref option ; t : float }
 type point_light = { intensity:color ; pos:tuple }
 type world = { light:point_light ; objects:sphere list }
 
@@ -52,12 +53,25 @@ let intersect_world w r =
   in let res = aux w.objects in
   List.sort (fun x y -> if x.t < y.t then (-1) else if x.t > y.t then 1 else 0) res
   
-let get_sphere (i:intersection) = !(Option.get i.obj)
+let get_shape (i:intersection) = !(Option.get i.obj)
 
 let make_light c p = {intensity=c ; pos=p}
 
-let lighting mat light pt eyev normv in_shadow =
-  let eff_col = hadamard mat.col light.intensity in
+let get_pattern obj_tf (pt:tuple) = function
+  | Plain c -> c
+  | Stripe (tf, f) | Checker (tf, f) -> 
+    (
+      let obj_pt = matmul (invert obj_tf) (mat_from_tup pt) in 
+      let pattern_pt = matmul (invert tf) obj_pt in 
+      f (tup_from_mat pattern_pt)
+    )
+
+
+let lighting (obj:shape) light pt eyev normv in_shadow =
+  let mat = obj#get_material in 
+  let c = get_pattern (obj#get_transform) pt mat.pattern in
+
+  let eff_col = hadamard c light.intensity in
   let lightv = norm (tsub light.pos pt) in
   let ambient = cmult eff_col mat.amb in
   let light_dot_norm = dot lightv normv in
@@ -65,23 +79,25 @@ let lighting mat light pt eyev normv in_shadow =
   let diff, spec =
     if light_dot_norm < 0. || in_shadow then
       (make_color 0. 0. 0., make_color 0. 0. 0.)
-    else
+    else begin 
       let diff = cmult eff_col (mat.dif *. light_dot_norm) in
-      let reflectv = reflect (tmult lightv (-1.)) normv in
+      let reflectv = reflect (tneg lightv) normv in
       let reflect_dot_eye = dot reflectv eyev in
       let spec =
         if reflect_dot_eye <= 0. then make_color 0. 0. 0.
-        else
+        else begin
           let factor = Float.pow reflect_dot_eye mat.shine in
           cmult light.intensity (mat.spec *. factor)
+        end
       in
       (diff, spec)
+    end
   in
   Color (cadd (cadd ambient diff) spec)
 
 let default_world () = 
   let sph1, sph2 = (new sphere, new sphere) in
-  sph1#set_material (make_material ~sp:0.2 ~di:0.7 ~c:(make_color 0.8 1.0 0.6) ());
+  sph1#set_material (make_material ~sp:0.2 ~di:0.7 ~pat:(Plain (make_color 0.8 1.0 0.6)) ());
   sph2#set_transform (scale 0.5 0.5 0.5);
   {
   light = make_light (make_color 1. 1. 1.) (point (-10.) 10. (-10.));
@@ -89,7 +105,7 @@ let default_world () =
   }
 
 let prepare_computations i r = 
-  let s = get_sphere i in 
+  let s = get_shape i in 
   let p = Ray.position r i.t in 
   let ev = tneg (Ray.get_dir r) in 
   let nv = s#normal_at p in 
@@ -101,24 +117,33 @@ let prepare_computations i r =
     eyev=   ev;
     normv=  if ins then tneg nv else nv;
     inside= ins;
-    over_pt= tadd p (tmult nv 0.001);
+    over_pt= tadd p (tmult nv _EPSILON);
   }
 
-let is_shadowed world pt = 
+let pattern_get = function
+  | Plain c -> c
+  | _ -> _BLACK
+
+let is_shadowed world pt (h_obj:intersection) = 
   let v = tsub (world.light.pos) pt in 
   let dist, dir = (magnitude v, norm v) in 
   let r = Ray.make ~p:pt ~v:dir in 
   let xs = intersect_world world r in 
   let h = hit xs in 
-  (h.obj != None && h.t <= dist)
+  let shadowed = h.obj != None && get_shape (h) != get_shape (h_obj) && h.t <= dist in 
+  (* if shadowed then begin 
+    Printf.printf "%6.4f  " h.t ; print_clr (pattern_get ((get_shape h)#get_material.pattern)) ;  print_newline ();
+  end; *)
+  shadowed
 
 
 let color_at w r = 
   let xs = intersect_world w r in 
   let h = hit xs in 
   if h.obj != None then begin
-    let comp = prepare_computations (hit xs) r in 
-    lighting (comp.obj#get_material) w.light comp.pt comp.eyev comp.normv (is_shadowed w comp.over_pt)
+    let comp = prepare_computations h r in 
+    let shadowed = is_shadowed w comp.over_pt h in 
+    lighting comp.obj w.light comp.over_pt comp.eyev comp.normv shadowed
   end else Blank
 
 
@@ -166,6 +191,7 @@ let render (cam:camera) (world:world) =
   let img = make_canvas ~w:cam.hsize ~h:cam.vsize in 
   for y = 0 to pred cam.vsize do 
     for x = 0 to pred cam.hsize do 
+      (* Printf.printf "(%d,%d): " x y; *)
       let r = ray_for_pixel cam (float_of_int x) (float_of_int y) in 
       let c = color_at world r in 
       img.grid.(x).(y) <- c;

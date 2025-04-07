@@ -43,9 +43,9 @@ class virtual shape ?(tf=(identity 4)) ?(mat=make_material ()) () = object (self
 
   method normal_at p =
     let inv_tf = invert transform in 
-    let local_pt = tup_from_mat (matmul inv_tf (mat_from_tup p)) in 
-    let local_norm = self#local_normal_at local_pt in 
-    let world_norm = matmul (transpose inv_tf) (mat_from_tup local_norm) in 
+    let obj_pt = tup_from_mat (matmul inv_tf (mat_from_tup p)) in 
+    let obj_norm = self#local_normal_at obj_pt in 
+    let world_norm = matmul (transpose inv_tf) (mat_from_tup obj_norm) in 
     world_norm.(3).(0) <- 0.;
     norm (tup_from_mat world_norm)
 
@@ -55,7 +55,7 @@ end
 class sphere = object
   inherit shape ()
 
-  method local_normal_at pt= 
+  method local_normal_at pt = 
     tsub pt (point 0. 0. 0.)
 
   method local_intersect local_r = 
