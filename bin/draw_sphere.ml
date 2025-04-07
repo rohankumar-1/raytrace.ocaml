@@ -41,7 +41,7 @@ let () =
 
       (* if there is an intersection (hit xs != 0), then we know that this pixel is part of the silhoutte *)
       if (hit xs).obj != None then begin
-        can.grid.(x).(y) <- Color col ;
+        can.grid.(x).(y) <- col ;
       end
     done;
   done;

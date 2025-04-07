@@ -3,7 +3,6 @@ open Transform
 open Draw
 open Data
 open Shapes
-open Constants
 
 
 let () = 

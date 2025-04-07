@@ -93,7 +93,7 @@ let lighting (obj:shape) light pt eyev normv in_shadow =
       (diff, spec)
     end
   in
-  Color (cadd (cadd ambient diff) spec)
+  cadd (cadd ambient diff) spec
 
 let default_world () = 
   let sph1, sph2 = (new sphere, new sphere) in
@@ -144,7 +144,7 @@ let color_at w r =
     let comp = prepare_computations h r in 
     let shadowed = is_shadowed w comp.over_pt h in 
     lighting comp.obj w.light comp.over_pt comp.eyev comp.normv shadowed
-  end else Blank
+  end else _BLACK
 
 
 let view_transform fromv tov upv = 
