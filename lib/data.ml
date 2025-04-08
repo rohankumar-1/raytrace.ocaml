@@ -1,5 +1,5 @@
-
-let equal_float a b = (abs_float (a -. b)) < 0.0001
+open Constants
+let equal_float a b = (abs_float (a -. b)) < _EPSILON
 
 type tuple = {x:float ; y:float ; z:float ; w:float}
 exception UnequalDims of string;;

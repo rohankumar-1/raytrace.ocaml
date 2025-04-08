@@ -63,7 +63,7 @@ let () =
   let cam = make_camera 50 25 (Float.pi /. 3.) in 
   cam.tf := view_transform (point 0. 1.5 (-5.)) (point 0. 1. 0.) (vector 0. 1. 0.);
 
-  let img = render cam world in 
-  let oc = open_out "output/scene_w_shadows_small.ppm" in 
+  let img = render cam world () in 
+  let oc = open_out "output/scene_w_shadows.ppm" in 
   write_canvas_P6 ~oc:oc ~can:img
 

@@ -16,7 +16,7 @@ type material = {
   dif: float;
   spec: float;
   shine: float;
-  (* reflective: float; *)
+  reflective: float;
 }
 
 type canvas = {
@@ -30,19 +30,21 @@ type canvas = {
 (* BUILDER FUNCTIONS *)
 (***************************************************)
 let make_color r g b = {red=r; green=g; blue=b}
-let _WHITE = (make_color 1. 1. 1.)
-let _BLACK = (make_color 0. 0. 0.)
-let _RED = (make_color 1. 0. 0.)
-let _GREEN = (make_color 0.0 1. 0.0)
-let _BLUE = (make_color 0. 0. 1.)
+let _WHITE = make_color 1. 1. 1.
+let _BLACK = make_color 0. 0. 0.
+let _RED = make_color 1. 0. 0.
+let _GREEN = make_color 0.0 1. 0.0
+let _BLUE = make_color 0. 0. 1.
+let _CYAN = make_color 0. 1. 0.95
+let _PINK = make_color 0.95 0. 1.
 
-let make_material ?(am=0.1) ?(di=0.9) ?(sp=0.9) ?(sh=200.0) ?(pat=Plain (make_color 1. 1. 1.)) () = {
+let make_material ?(am=0.1) ?(di=0.9) ?(sp=0.9) ?(sh=200.0) ?(pat=(Plain _WHITE)) ?(reflect=0.0) () = {
   pattern=pat;
   amb=am;
   dif=di;
   spec=sp;
   shine=sh;
-  (* reflective=reflect; *)
+  reflective=reflect;
 }   
 let make_canvas ~w ~h = {width=w; height=h; grid= Array.make_matrix w h _BLACK}
 

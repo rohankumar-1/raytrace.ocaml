@@ -41,6 +41,6 @@ let () =
   let cam = make_camera 800 400 (Float.pi /. 3.) in 
   cam.tf := view_transform (point 0. 1.5 (-5.)) (point 0. 1. 0.) (vector 0. 1. 0.);
 
-  let img = render cam world in 
+  let img = render cam world () in 
   let oc = open_out "output/scene_w_floor.ppm" in 
-  write_canvas_P6 ~oc:oc ~can:img
+  write_canvas_P6 ~oc:oc ~can:img 

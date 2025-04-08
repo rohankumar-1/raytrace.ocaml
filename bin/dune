@@ -1,4 +1,4 @@
 (executables
- (names main draw_arc draw_sphere render_sphere render_scene render_plane render_patterns)
- (public_names main draw_arc draw_sphere render_sphere render_scene render_plane render_patterns)
+ (names main draw_arc draw_sphere render_sphere render_scene render_plane render_patterns render_reflection)
+ (public_names main draw_arc draw_sphere render_sphere render_scene render_plane render_patterns render_reflection)
  (libraries raytrace))

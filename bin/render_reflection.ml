@@ -8,7 +8,7 @@ open Shapes
 let () = 
 
   let floor = new plane in 
-  floor#set_material (make_material ~pat:(make_plain (make_color 1.0 0.9 0.9)) ());
+  floor#set_material (make_material ~pat:(make_plain (make_color 1.0 0.9 0.9)) ~reflect:0.2 ());
 
   let lwall = new plane in 
   let tf = chain_transforms [(scale 0.2 0.2 0.2) ; rotate_y (Float.pi /. 2.)] in 
@@ -51,10 +51,10 @@ let () =
     ];
   } in 
 
-  let cam = make_camera 200 100 (Float.pi /. 3.) in 
+  let cam = make_camera 800 400 (Float.pi /. 3.) in 
   cam.tf := view_transform (point 0. 1.5 (-5.)) (point 0. 1. 0.) (vector 0. 1. 0.);
 
-  let img = render cam world () in 
-  let oc = open_out "output/scene_w_patterns.ppm" in 
+  let img = render cam world ~reflect_recurse:2 () in 
+  let oc = open_out "output/scene_w_reflect.ppm" in 
   write_canvas_P6 ~oc:oc ~can:img;
 
