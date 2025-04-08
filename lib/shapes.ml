@@ -86,3 +86,37 @@ class plane = object
 
 end
 
+
+class cube = object
+  inherit shape ()
+
+  method local_normal_at pt =
+    let maxc = max (max (abs_float pt.x) (abs_float pt.y)) (abs_float pt.z) in 
+
+    if equal_float maxc (abs_float pt.x) then vector pt.x 0. 0. 
+    else if equal_float maxc (abs_float pt.y) then vector 0. pt.y 0.
+    else vector 0. 0. pt.z
+
+  method local_intersect local_r = 
+    let check_axis org dir = 
+      let tmin_num, tmax_num = ((-1.) -. org, 1. -. org) in 
+      let tmin, tmax = 
+        if abs_float dir >= _EPSILON then begin 
+          (tmin_num /. dir, tmax_num /. dir)
+        end else begin
+          (tmin_num *. infinity, tmax_num *. infinity)
+        end in
+      if tmin > tmax then (tmax, tmin) else (tmin, tmax)
+    in
+    let dir, org = (Ray.get_dir local_r, Ray.get_origin local_r) in 
+    let xtmin, xtmax = check_axis org.x dir.x in 
+    let ytmin, ytmax = check_axis org.y dir.y in 
+    let ztmin, ztmax = check_axis org.z dir.z in 
+    let tmin = max (max xtmin ytmin) ztmin in 
+    let tmax = min (min xtmax ytmax) ztmax in
+    if tmin > tmax then [] else [tmin;tmax]
+
+end
+
+
+

@@ -113,8 +113,6 @@ let prepare_computations i r =
   let ins = (dot ev temp_nv) < 0. in
   let nv = if ins then tneg temp_nv else temp_nv in 
 
-  
-
   {
     dist=   i.t;
     obj=    s;
