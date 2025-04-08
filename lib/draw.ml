@@ -17,6 +17,8 @@ type material = {
   spec: float;
   shine: float;
   reflective: float;
+  transparency: float;
+  refractice_idx: float;
 }
 
 type canvas = {
@@ -38,14 +40,25 @@ let _BLUE = make_color 0. 0. 1.
 let _CYAN = make_color 0. 1. 0.95
 let _PINK = make_color 0.95 0. 1.
 
-let make_material ?(am=0.1) ?(di=0.9) ?(sp=0.9) ?(sh=200.0) ?(pat=(Plain _WHITE)) ?(reflect=0.0) () = {
-  pattern=pat;
-  amb=am;
-  dif=di;
-  spec=sp;
-  shine=sh;
-  reflective=reflect;
-}   
+let make_material ?(am=0.1) 
+                  ?(di=0.9) 
+                  ?(sp=0.9) 
+                  ?(sh=200.0) 
+                  ?(pat=(Plain _WHITE)) 
+                  ?(reflect=0.0) 
+                  ?(transp=0.) 
+                  ?(refract=1.) 
+                  () = 
+  {
+    pattern=pat;
+    amb=am;
+    dif=di;
+    spec=sp;
+    shine=sh;
+    reflective=reflect;
+    transparency=transp;
+    refractice_idx=refract;
+  }   
 let make_canvas ~w ~h = {width=w; height=h; grid= Array.make_matrix w h _BLACK}
 
 let make_plain c = Plain c

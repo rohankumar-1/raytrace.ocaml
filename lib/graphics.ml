@@ -109,17 +109,21 @@ let prepare_computations i r =
   let s = get_shape i in 
   let p = Ray.position r i.t in 
   let ev = tneg (Ray.get_dir r) in 
-  let nv = s#normal_at p in 
-  let ins = (dot ev nv) < 0. in
+  let temp_nv = s#normal_at p in 
+  let ins = (dot ev temp_nv) < 0. in
+  let nv = if ins then tneg temp_nv else temp_nv in 
+
+  
+
   {
     dist=   i.t;
     obj=    s;
     pt=     p;
     eyev=   ev;
-    normv=  if ins then tneg nv else nv;
+    normv=  nv;
     inside= ins;
     over_pt= tadd p (tmult nv _EPSILON);
-    reflectv= reflect (Ray.get_dir r) (if ins then tneg nv else nv)
+    reflectv= reflect (Ray.get_dir r) nv;
   }
 
 let pattern_get = function
