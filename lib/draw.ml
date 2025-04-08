@@ -16,17 +16,15 @@ type material = {
   dif: float;
   spec: float;
   shine: float;
-  (* reflective: float; *)
+  reflective: float;
+  transparency: float;
+  refractice_idx: float;
 }
-
-type pixel =
-  | Color of color
-  | Blank
 
 type canvas = {
   height: int;
   width: int;
-  grid: pixel array array
+  grid: color array array
 }
 
 
@@ -34,15 +32,34 @@ type canvas = {
 (* BUILDER FUNCTIONS *)
 (***************************************************)
 let make_color r g b = {red=r; green=g; blue=b}
-let make_material ?(am=0.1) ?(di=0.9) ?(sp=0.9) ?(sh=200.0) ?(pat=Plain (make_color 1. 1. 1.)) () = {
-  pattern=pat;
-  amb=am;
-  dif=di;
-  spec=sp;
-  shine=sh;
-  (* reflective=reflect; *)
-}   
-let make_canvas ~w ~h = {width=w; height=h; grid= Array.make_matrix w h Blank}
+let _WHITE = make_color 1. 1. 1.
+let _BLACK = make_color 0. 0. 0.
+let _RED = make_color 1. 0. 0.
+let _GREEN = make_color 0.0 1. 0.0
+let _BLUE = make_color 0. 0. 1.
+let _CYAN = make_color 0. 1. 0.95
+let _PINK = make_color 0.95 0. 1.
+
+let make_material ?(am=0.1) 
+                  ?(di=0.9) 
+                  ?(sp=0.9) 
+                  ?(sh=200.0) 
+                  ?(pat=(Plain _WHITE)) 
+                  ?(reflect=0.0) 
+                  ?(transp=0.) 
+                  ?(refract=1.) 
+                  () = 
+  {
+    pattern=pat;
+    amb=am;
+    dif=di;
+    spec=sp;
+    shine=sh;
+    reflective=reflect;
+    transparency=transp;
+    refractice_idx=refract;
+  }   
+let make_canvas ~w ~h = {width=w; height=h; grid= Array.make_matrix w h _BLACK}
 
 let make_plain c = Plain c
 
@@ -57,7 +74,7 @@ let make_checked (ca:color) (cb:color) tf =
     tf,
     fun pt -> if (int_of_float ((floor pt.x) +. (floor pt.y) +. (floor pt.z)) mod 2) = 0 then ca else cb
   )
-  
+
 
 (***************************************************)
 (* COLOR OPS *)
@@ -83,14 +100,7 @@ let scale_clr x =
   else if scaled < 0. then 0
   else int_of_float scaled
 
-let pix_to_col = function
-  | Color c -> c
-  | Blank -> make_color 0. 0. 0.
-
-let pixel_to_string_P3 pixel = 
-  match pixel with
-  | Blank -> Printf.sprintf "%-3d %-3d %-3d" 0 0 0
-  | Color c -> Printf.sprintf "%-3d %-3d %-3d" (scale_clr c.red) (scale_clr c.green) (scale_clr c.blue)
+let col_to_string_P3 c =  Printf.sprintf "%-3d %-3d %-3d" (scale_clr c.red) (scale_clr c.green) (scale_clr c.blue)
 
 
 (***************************************************)
@@ -103,7 +113,7 @@ let write_canvas_P3 ~oc ~can =
   Printf.fprintf oc "P3\n%d %d\n255\n" can.width can.height;
   for y = 0 to pred can.height do
     for x = 0 to pred can.width do 
-      Printf.fprintf oc "%-12s  " (pixel_to_string_P3 can.grid.(x).(y));
+      Printf.fprintf oc "%-12s  " (col_to_string_P3 can.grid.(x).(y));
     done;
     Printf.fprintf oc "\n,";
   done;
@@ -113,17 +123,10 @@ let write_canvas_P6 ~oc ~can =
   Printf.fprintf oc "P6 %d %d 255\n" can.width can.height;
   for y = 0 to pred can.height do
     for x = 0 to pred can.width do
-      match can.grid.(x).(y) with
-        | Blank -> begin
-          output_char oc (char_of_int 0);
-          output_char oc (char_of_int 0);
-          output_char oc (char_of_int 0);
-        end
-        | Color c -> begin
-          output_char oc (char_of_int (scale_clr c.red));
-          output_char oc (char_of_int (scale_clr c.green));
-          output_char oc (char_of_int (scale_clr c.blue));
-        end
+      let c = can.grid.(x).(y) in 
+      output_char oc (char_of_int (scale_clr c.red));
+      output_char oc (char_of_int (scale_clr c.green));
+      output_char oc (char_of_int (scale_clr c.blue));
     done;
   done;
   output_char oc '\n';

@@ -1,5 +1,6 @@
 open Data
 open Draw
+open Constants
 
 (**
 For all shapes, we share the following members and functions:
@@ -80,7 +81,7 @@ class plane = object
 
   method local_intersect local_r = 
     saved_ray <- Some local_r;
-    if Float.abs (local_r.dir.y) < 0.001 then []
+    if Float.abs (local_r.dir.y) < _EPSILON then []
     else [(-.local_r.origin.y) /. local_r.dir.y]
 
 end

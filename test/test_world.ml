@@ -84,14 +84,14 @@ let test_view_transform _ =
 
 let test_color_at _ = 
   let r = Ray.make ~p:(point 0. 0. (-5.)) ~v:(vector 0. 1. 0.) in 
-  let c = color_at w r in 
-  assert_bool "" (cequal (pix_to_col c) (make_color 0. 0. 0.))
+  let c = color_at w r 0 in 
+  assert_bool "" (cequal c (make_color 0. 0. 0.))
 
 
 let test_color_at_2 _ = 
   let r = Ray.make ~p:(point 0. 0. (-5.)) ~v:(vector 0. 0. 1.) in 
-  let c = color_at w r in 
-  assert_bool "" (cequal (pix_to_col c) (make_color 0.38066 0.47583 0.2855))
+  let c = color_at w r 0 in 
+  assert_bool "" (cequal c (make_color 0.38066 0.47583 0.2855))
 
 let test_render _ = 
   let c = make_camera 11 11 (Float.pi /. 2.) in 
@@ -100,8 +100,8 @@ let test_render _ =
   let upv = vector 0. 1. 0. in 
   
   c.tf := view_transform fromv tov upv;
-  let img = render c w in 
-  assert_bool "render" (cequal (pix_to_col img.grid.(5).(5)) (make_color 0.38066 0.47583 0.2855))
+  let img = render c w () in 
+  assert_bool "render" (cequal img.grid.(5).(5) (make_color 0.38066 0.47583 0.2855))
 
 
 let suite = 

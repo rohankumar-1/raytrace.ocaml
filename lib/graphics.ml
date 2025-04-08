@@ -16,6 +16,7 @@ type info = {
   normv: tuple;
   inside: bool;
   over_pt: tuple;
+  reflectv: tuple;
 }
 
 type camera = {
@@ -93,7 +94,7 @@ let lighting (obj:shape) light pt eyev normv in_shadow =
       (diff, spec)
     end
   in
-  Color (cadd (cadd ambient diff) spec)
+  cadd (cadd ambient diff) spec
 
 let default_world () = 
   let sph1, sph2 = (new sphere, new sphere) in
@@ -108,16 +109,21 @@ let prepare_computations i r =
   let s = get_shape i in 
   let p = Ray.position r i.t in 
   let ev = tneg (Ray.get_dir r) in 
-  let nv = s#normal_at p in 
-  let ins = (dot ev nv) < 0. in
+  let temp_nv = s#normal_at p in 
+  let ins = (dot ev temp_nv) < 0. in
+  let nv = if ins then tneg temp_nv else temp_nv in 
+
+  
+
   {
     dist=   i.t;
     obj=    s;
     pt=     p;
     eyev=   ev;
-    normv=  if ins then tneg nv else nv;
+    normv=  nv;
     inside= ins;
     over_pt= tadd p (tmult nv _EPSILON);
+    reflectv= reflect (Ray.get_dir r) nv;
   }
 
 let pattern_get = function
@@ -127,25 +133,27 @@ let pattern_get = function
 let is_shadowed world pt (h_obj:intersection) = 
   let v = tsub (world.light.pos) pt in 
   let dist, dir = (magnitude v, norm v) in 
-  let r = Ray.make ~p:pt ~v:dir in 
-  let xs = intersect_world world r in 
-  let h = hit xs in 
-  let shadowed = h.obj != None && get_shape (h) != get_shape (h_obj) && h.t <= dist in 
-  (* if shadowed then begin 
-    Printf.printf "%6.4f  " h.t ; print_clr (pattern_get ((get_shape h)#get_material.pattern)) ;  print_newline ();
-  end; *)
-  shadowed
+  let h = hit (intersect_world world (Ray.make ~p:pt ~v:dir)) in 
+  (h.obj != None) && (get_shape (h) != get_shape (h_obj)) && (h.t <= dist)
 
-
-let color_at w r = 
-  let xs = intersect_world w r in 
-  let h = hit xs in 
+let rec color_at w r remaining = 
+  let h = hit (intersect_world w r) in 
   if h.obj != None then begin
     let comp = prepare_computations h r in 
     let shadowed = is_shadowed w comp.over_pt h in 
-    lighting comp.obj w.light comp.over_pt comp.eyev comp.normv shadowed
-  end else Blank
+    let surface = lighting comp.obj w.light comp.over_pt comp.eyev comp.normv shadowed in 
+    let reflected = reflected_color w comp remaining in 
+    cadd surface reflected
+  end else _BLACK
 
+and reflected_color world comps remaining = 
+  let refl = comps.obj#get_material.reflective in
+  if refl = 0.0 then _BLACK
+  else begin
+    let reflect_ray = Ray.make ~p:(comps.over_pt) ~v:(comps.reflectv) in
+    let c = color_at world reflect_ray (remaining - 1) in 
+    cmult c refl
+  end
 
 let view_transform fromv tov upv = 
   let forwardv = norm (tsub tov fromv) in 
@@ -187,13 +195,13 @@ let ray_for_pixel cam px py =
   let direction = norm (tsub pixel origin) in 
   Ray.make ~p:origin ~v:direction 
 
-let render (cam:camera) (world:world) = 
+let render (cam:camera) (world:world) ?(reflect_recurse=0) ()= 
   let img = make_canvas ~w:cam.hsize ~h:cam.vsize in 
   for y = 0 to pred cam.vsize do 
     for x = 0 to pred cam.hsize do 
       (* Printf.printf "(%d,%d): " x y; *)
       let r = ray_for_pixel cam (float_of_int x) (float_of_int y) in 
-      let c = color_at world r in 
+      let c = color_at world r reflect_recurse in 
       img.grid.(x).(y) <- c;
     done;
   done;
