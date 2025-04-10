@@ -4,7 +4,7 @@ open Transform
 open Shapes
 open Constants
 
-type intersection = { obj:shape ref option ; t : float }
+type intersection = { obj:shape ref option ; t:float }
 type point_light = { intensity:color ; pos:tuple }
 type world = { light:point_light ; objects:sphere list }
 

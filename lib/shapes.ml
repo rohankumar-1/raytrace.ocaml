@@ -119,4 +119,26 @@ class cube = object
 end
 
 
+class cylinder = object
+  inherit shape ()
 
+  val mutable minimum = -1.;
+  val mutable maximum = 1.;
+
+  method local_normal_at pt = vector pt.x 0. pt.z 
+  
+  method local_intersect local_r = 
+    let d, o = Ray.get_dir local_r, Ray.get_origin local_r in
+    let a = (Float.pow d.x 2.) +. (Float.pow d.z 2.) in
+    if equal_float a 0. then [] else begin
+      let b = (2. *. o.x *. d.x) +. (2. *. o.z *. d.z) in 
+      let c = (Float.pow o.x 2.) +. (Float.pow o.z 2.) -. 1. in 
+      let disc = (Float.pow b 2.) -. (4. *. a *. c) in 
+      if disc < 0. then []
+      else begin
+        [((Float.neg b) -. (sqrt disc)) /. (2. *. a);
+         ((Float.neg b) +. (sqrt disc)) /. (2. *. a)]
+      end
+    end
+
+end
